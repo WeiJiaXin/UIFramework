@@ -25,17 +25,12 @@ namespace Lowy.UIFramework
         private WindowContent _content;
         private bool _createing;
 
-        public CreateViewWindow()
-        {
-            _content = new WindowContent();
-        }
-
         [MenuItem("Window/UIFramework/Create View %u")]
         public static void CreateView()
         {
             //创建窗口
             CreateViewWindow window = GetWindow();
-                
+
             window.Show();
         }
 
@@ -44,6 +39,16 @@ namespace Lowy.UIFramework
             Rect wr = new Rect(0, 0, 500, 300);
             return (CreateViewWindow) EditorWindow.GetWindowWithRect(typeof(CreateViewWindow), wr, true,
                 "Create View Window");
+        }
+
+        private void OnEnable()
+        {
+            _content = GetContent();
+        }
+
+        private void OnDisable()
+        {
+            SaveContent(_content);
         }
 
         private void OnGUI()
@@ -56,6 +61,7 @@ namespace Lowy.UIFramework
                 EditorGUILayout.LabelField("Create Prefabs wait");
                 return;
             }
+
             _content.cs_name = EditorGUILayout.DelayedTextField("CS name", _content.cs_name).Trim();
             _content.content_type = (UIContentType) EditorGUILayout.EnumPopup("Content Type", _content.content_type);
             _content.uiView_base =
@@ -65,6 +71,15 @@ namespace Lowy.UIFramework
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Select Cs Path", GUILayout.MaxWidth(150)))
             {
+                string path = SelectPath();
+                if (!string.IsNullOrEmpty(path) && path.Contains(Application.dataPath+ "/"))
+                {
+                    _content.cs_path = path.Replace(Application.dataPath + "/", "");
+                }
+                else
+                {
+                    EditorUtility.DisplayDialog("UI Framework", $"'{path}' Path invalid, path need has '{Application.dataPath}/'", "ok");
+                }
             }
 
             GUILayout.Label("CS Path：" + _content.cs_path);
@@ -72,6 +87,15 @@ namespace Lowy.UIFramework
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Select Resources Path", GUILayout.MaxWidth(150)))
             {
+                string path = SelectPath();
+                if (!string.IsNullOrEmpty(path) && path.Contains(Application.dataPath+ "/"))
+                {
+                    _content.prefab_res_path = path.Replace(Application.dataPath + "/", "");
+                }
+                else
+                {
+                    EditorUtility.DisplayDialog("UI Framework", $"'{path}' Path invalid, path need has '{Application.dataPath}/'", "ok");
+                }
             }
 
             GUILayout.Label("CS Path：" + _content.prefab_res_path);
@@ -79,6 +103,7 @@ namespace Lowy.UIFramework
 
             if (GUILayout.Button("Create Prefabs", GUILayout.Height(40)))
             {
+                EditorUtility.DisplayProgressBar("UI Framework", "Loading Script ...", 0.4f);
                 SaveContent(_content);
                 CreateMonoUIView(_content);
                 AssetDatabase.SaveAssets();
@@ -87,20 +112,43 @@ namespace Lowy.UIFramework
             }
         }
 
+        private string SelectPath()
+        {
+            return EditorUtility.SaveFolderPanel("Select cs save path", Application.dataPath, "Assets");
+        }
+
+        private WindowContent GetContent()
+        {
+            if (PlayerPrefs.HasKey("UI_FRAMEWORK_WINDOW_CONTENT_KEY"))
+                return JsonUtility.FromJson<WindowContent>(PlayerPrefs.GetString("UI_FRAMEWORK_WINDOW_CONTENT_KEY"));
+            return new WindowContent();
+        }
+
         private void SaveContent(WindowContent content)
         {
-            //
+            PlayerPrefs.SetString("UI_FRAMEWORK_WINDOW_CONTENT_KEY", JsonUtility.ToJson(content));
         }
 
         private void CreateMonoUIView(WindowContent content)
         {
-            CreatePath($"{Application.dataPath}/{content.cs_path}");
+            string path = $"{Application.dataPath}/{content.cs_path}";
+            CreatePath(path);
+            string oldText = "";
+            if (File.Exists($"{path}/{content.cs_name}{content.content_type}.cs"))
+                oldText = File.ReadAllText($"{path}/{content.cs_name}{content.content_type}.cs");
             string text = File.ReadAllText($"{Application.dataPath}/UIFramework/Editor/UIView.cs.txt");
             text = text.Replace("$FILE_NAME$", content.cs_name);
             text = text.Replace("$CONTENT_TYPE$", content.content_type.ToString());
             text = text.Replace("$UI_VIEW$", WindowContent.UIView_base_Names[content.uiView_base]);
             //
-            File.WriteAllText($"{Application.dataPath}/{content.cs_path}/{content.cs_name}{content.content_type}.cs",
+            if (text == oldText)
+            {
+                _createing = false;
+                return;
+            }
+
+            //
+            File.WriteAllText($"{path}/{content.cs_name}{content.content_type}.cs",
                 text);
         }
 
@@ -122,16 +170,19 @@ namespace Lowy.UIFramework
             PrefabUtility.SaveAsPrefabAsset(g,
                 $"Assets/{content.prefab_res_path}/{content.content_type}/{name}.prefab");
             DestroyImmediate(g);
+            EditorUtility.ClearProgressBar();
         }
-        
+
         [UnityEditor.Callbacks.DidReloadScripts]
         static void AllScriptsReloaded()
         {
             var window = GetWindow();
-            if(!window._createing){
+            if (!window._createing)
+            {
                 window.Close();
                 return;
             }
+
             window.CreatePrefabs(window._content);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
