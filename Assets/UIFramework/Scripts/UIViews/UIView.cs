@@ -12,7 +12,7 @@ namespace Lowy.UIFramework
     public abstract class UIView : MonoBehaviour
     {
         protected AbsContent _content;
-        protected Canvas _canvas;
+        private Canvas _canvas;
 
         public Canvas Canvas => _canvas = _canvas == null ? GetComponent<Canvas>() : _canvas;
 
@@ -26,7 +26,7 @@ namespace Lowy.UIFramework
 
         public virtual void Awake()
         {
-
+            Binder.InjectObj(this);
         }
 
         /// <summary>

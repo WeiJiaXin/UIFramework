@@ -38,7 +38,7 @@ namespace Lowy.UIFramework
         /// <returns></returns>
         public virtual string UIViewName()
         {
-            return _resPath.Replace("Content", ContentType.ToString());
+            return GetType().Name.Replace("Content", ContentType.ToString());
         }
     }
 }

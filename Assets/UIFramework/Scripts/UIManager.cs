@@ -97,6 +97,8 @@ namespace Lowy.UIFramework
         private UIView FindUIView<T>(T content) where T : AbsContent
         {
             Type t = typeof(T);
+            if (content != null)
+                t = content.GetType();
             if (_uiDic.ContainsKey(t))
                 return _uiDic[t];
             if (content == null)
