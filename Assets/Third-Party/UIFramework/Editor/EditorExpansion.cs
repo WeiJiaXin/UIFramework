@@ -36,7 +36,7 @@ namespace Lowy.UIFramework
 
         public static CreateViewWindow GetWindow()
         {
-            Rect wr = new Rect(0, 0, 500, 300);
+            Rect wr = new Rect(0, 0, 500, 350);
             return (CreateViewWindow) EditorWindow.GetWindowWithRect(typeof(CreateViewWindow), wr, true,
                 "Create View Window");
         }
@@ -62,7 +62,7 @@ namespace Lowy.UIFramework
                 return;
             }
 
-            _content.cs_name = EditorGUILayout.DelayedTextField("CS name", _content.cs_name).Trim();
+            _content.cs_name = EditorGUILayout.TextField("CS name", _content.cs_name).Trim();
             _content.content_type = (UIContentType) EditorGUILayout.EnumPopup("Content Type", _content.content_type);
             _content.uiView_base =
                 EditorGUILayout.Popup("UIView Base Class", _content.uiView_base, WindowContent.UIView_base_Names);
@@ -105,11 +105,38 @@ namespace Lowy.UIFramework
             {
                 EditorUtility.DisplayProgressBar("UI Framework", "Loading Script ...", 0.4f);
                 SaveContent(_content);
-                CreateMonoUIView(_content);
+                if (CanCreate(_content))
+                {
+                    CreateMonoUIView(_content);
+                    _createing = true;
+                }
+                else
+                {
+                    EditorUtility.DisplayDialog("提示", "文件已存在", "ok");
+                    _createing = false;
+                }
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
-                _createing = true;
             }
+
+            EditorGUILayout.LabelField("如果修改视图类型：");
+            EditorGUILayout.LabelField("1.代码'重命名'脚本名，后缀为所需的上下文类型");
+            EditorGUILayout.LabelField("2.下面的上下文中修改类型为对应的枚举");
+            EditorGUILayout.LabelField("3.重命名文件，保持与脚本对应");
+            EditorGUILayout.LabelField("4.重命名预制物，与脚本对应");
+            EditorGUILayout.LabelField("5.移动预制物到相应的文件夹中");
+        }
+
+        private float i = 0;
+        private bool CanCreate(WindowContent content)
+        {
+            if (File.Exists($"{Application.dataPath}/{content.cs_path}/{content.cs_name}{content.content_type}.cs"))
+                return false;
+            if (File.Exists(
+                $"{Application.dataPath}/{content.prefab_res_path}/{content.content_type}/{content.cs_name}{content.content_type}.prefab")
+            )
+                return false;
+            return true;
         }
 
         private string SelectPath()
@@ -164,6 +191,7 @@ namespace Lowy.UIFramework
             rect.sizeDelta = Vector2.zero;
             rect.anchoredPosition = Vector2.zero;
             rect.GetComponent<Image>().color = new Color(1, 1, 1, 0.4f);
+            rect.gameObject.layer = LayerMask.NameToLayer("UI");
             //
             CreatePath($"{Application.dataPath}/{content.prefab_res_path}/{content.content_type}");
             //
@@ -204,6 +232,7 @@ namespace Lowy.UIFramework
             g.AddComponent<GraphicRaycaster>();
             var t = Assembly.Load("Assembly-CSharp").GetType(conotent.cs_name + conotent.content_type);
             g.AddComponent(t);
+            g.layer = LayerMask.NameToLayer("UI");
         }
     }
 }

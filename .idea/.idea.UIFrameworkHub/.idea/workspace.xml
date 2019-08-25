@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4c390825-c634-4453-92da-84ce9f2880db" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/Assets/UIFramework/Editor/EditorExpansion.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UIFramework/Editor/EditorExpansion.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.UIFrameworkHub/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.UIFrameworkHub/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assets/UIFramework/Editor/EditorExpansion.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="379">
-              <caret line="87" column="58" selection-start-line="87" selection-start-column="58" selection-end-line="87" selection-end-column="58" />
+            <state relative-caret-position="858">
+              <caret line="86" column="46" selection-start-line="86" selection-start-column="46" selection-end-line="86" selection-end-column="46" />
               <folding>
                 <marker date="1564591063124" expanded="false" signature="6:175" ph="..." />
                 <marker date="1564591063124" expanded="true" signature="203:7901" ph="{...}" />
@@ -51,6 +51,11 @@
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>Assets</find>
+    </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -170,12 +175,12 @@
       <updated>1564584487564</updated>
       <workItem from="1564584494576" duration="12000" />
       <workItem from="1564584563627" duration="3000" />
-      <workItem from="1564584603027" duration="4891000" />
+      <workItem from="1564584603027" duration="5054000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4906000" />
+    <option name="totallyTimeSpent" value="5069000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -233,8 +238,8 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/Assets/UIFramework/Editor/EditorExpansion.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="379">
-          <caret line="87" column="58" selection-start-line="87" selection-start-column="58" selection-end-line="87" selection-end-column="58" />
+        <state relative-caret-position="858">
+          <caret line="86" column="46" selection-start-line="86" selection-start-column="46" selection-end-line="86" selection-end-column="46" />
           <folding>
             <marker date="1564591063124" expanded="false" signature="6:175" ph="..." />
             <marker date="1564591063124" expanded="true" signature="203:7901" ph="{...}" />
