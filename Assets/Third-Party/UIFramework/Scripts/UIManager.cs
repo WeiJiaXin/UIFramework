@@ -24,6 +24,19 @@ namespace Lowy.UIFramework
                 return _ins;
             }
         }
+
+        private UIFrameworkConfig _config;
+
+        private UIFrameworkConfig Config
+        {
+            get
+            {
+                if (_config == null)
+                    _config = Resources.Load<UIFrameworkConfig>("UIFramework/Config");
+                return _config;
+            }
+        }
+        
         private Transform _UIRoot;
 
         private Camera _uiCamera;
@@ -104,9 +117,14 @@ namespace Lowy.UIFramework
             if (content == null)
                 return null;
             var obj = Resources.Load<GameObject>(content.ViewResPath);
+            //TODO 解除绑定
             var res = Object.Instantiate(obj, _UIRoot).GetComponent<UIView>();
             res.name = content.UIViewName();
             res.Canvas.worldCamera = GetUICamera();
+            int layer = content.ContentType <= UIContentType.UIView ? GetOutUILayer() : GetUILayer();
+            foreach (var child in res.GetComponentsInChildren<Transform>())
+                child.gameObject.layer = layer;
+            //
             _uiDic.Add(t, res);
             return res;
         }
@@ -127,6 +145,10 @@ namespace Lowy.UIFramework
         /// <param name="content"></param>
         private void PushStack([NotNull] AbsContent content)
         {
+            //如果有覆盖层则剔除这个层
+            if (content.Priority == UIContentType.OverView.ValueToInt()&&
+                (GetUICamera().cullingMask |= GetOutUILayer())==GetUICamera().cullingMask)
+                GetUICamera().cullingMask ^= GetOutUILayer();
             if (_stack.Count <= 0)
             {
                 _stack.Add(content);
@@ -146,6 +168,18 @@ namespace Lowy.UIFramework
             }
 
             _stack.Insert(0, content);
+        }
+
+        private void PopStack([NotNull] AbsContent content)
+        {
+            _stack.Remove(content);
+            //如果没有覆盖层则增加显示剔除层
+            if (content.Priority == UIContentType.OverView.ValueToInt())
+            {
+                if (_stack.Find(c => c.Priority == UIContentType.OverView.ValueToInt()) == null&&
+                    (GetUICamera().cullingMask |= GetOutUILayer())==GetUICamera().cullingMask)
+                    GetUICamera().cullingMask ^= GetOutUILayer();
+            }
         }
 
         /// <summary>
@@ -233,7 +267,7 @@ namespace Lowy.UIFramework
                     else
                         view.Disable(content);
                     //
-                    _stack.Remove(content);
+                    PopStack(content);
                     if (needResume)
                         FindUIView(_stack.Last()).Resume(_stack.Last());
                     return;
@@ -241,7 +275,7 @@ namespace Lowy.UIFramework
             }
 
             view.Disable(_stack[_stack.Count - 1]);
-            _stack.Remove(_stack[_stack.Count - 1]);
+            PopStack(_stack[_stack.Count - 1]);
             return;
         }
 
@@ -273,14 +307,48 @@ namespace Lowy.UIFramework
         {
             if (_uiCamera == null)
             {
-                var camera = Resources.Load<GameObject>("UICamera");
-                camera = Object.Instantiate(camera, Vector3.zero, Quaternion.identity);
+                var camera = GenerateUICamera();
+                //
                 camera.transform.SetParent(_UIRoot);
                 camera.transform.SetSiblingIndex(0);
                 _uiCamera = camera.GetComponent<Camera>();
             }
 
             return _uiCamera;
+        }
+
+        public int GetUILayer()
+        {
+            return Config.UILayer;
+        }
+
+        public int GetOutUILayer()
+        {
+            return Config.OutUILayer;
+        }
+
+        public int GetUIParticleLayer()
+        {
+            return Config.UIParticleLayer;
+        }
+
+        private GameObject GenerateUICamera()
+        {
+            var camera = new GameObject("UICamera", typeof(Camera)).GetComponent<Camera>();
+            camera.clearFlags = CameraClearFlags.Depth;
+            camera.cullingMask = GetUILayer();
+            camera.orthographic = true;
+            camera.orthographicSize = 5;
+            camera.depth = 1;
+            //
+            var particleCamera = new GameObject("ParticleCamera",typeof(Camera)).GetComponent<Camera>();
+            particleCamera.clearFlags = CameraClearFlags.Depth;
+            particleCamera.cullingMask = GetUIParticleLayer();
+            particleCamera.orthographic = false;
+            particleCamera.fieldOfView = 60;
+            particleCamera.depth = 1;
+            particleCamera.transform.SetParent(camera.transform);
+            return camera.gameObject;
         }
     }
 }

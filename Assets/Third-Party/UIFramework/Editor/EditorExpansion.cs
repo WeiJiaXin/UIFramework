@@ -17,7 +17,7 @@ namespace Lowy.UIFramework
         public int uiView_base = 0;
         public Vector2 screenSize = new Vector2(1080, 1920);
         public string cs_path = "Scripts/View";
-        public string prefab_res_path = "Resource";
+        public string prefab_res_path = "Resource/View";
     }
 
     public class CreateViewWindow : EditorWindow
@@ -103,7 +103,6 @@ namespace Lowy.UIFramework
 
             if (GUILayout.Button("Create Prefabs", GUILayout.Height(40)))
             {
-                EditorUtility.DisplayProgressBar("UI Framework", "Loading Script ...", 0.4f);
                 SaveContent(_content);
                 if (CanCreate(_content))
                 {
@@ -127,7 +126,6 @@ namespace Lowy.UIFramework
             EditorGUILayout.LabelField("5.移动预制物到相应的文件夹中");
         }
 
-        private float i = 0;
         private bool CanCreate(WindowContent content)
         {
             if (File.Exists($"{Application.dataPath}/{content.cs_path}/{content.cs_name}{content.content_type}.cs"))
@@ -163,7 +161,7 @@ namespace Lowy.UIFramework
             string oldText = "";
             if (File.Exists($"{path}/{content.cs_name}{content.content_type}.cs"))
                 oldText = File.ReadAllText($"{path}/{content.cs_name}{content.content_type}.cs");
-            string text = File.ReadAllText($"{Application.dataPath}/UIFramework/Editor/UIView.cs.txt");
+            string text = Resources.Load<TextAsset>("UIFramework/UIView.cs").text;
             text = text.Replace("$FILE_NAME$", content.cs_name);
             text = text.Replace("$CONTENT_TYPE$", content.content_type.ToString());
             text = text.Replace("$UI_VIEW$", WindowContent.UIView_base_Names[content.uiView_base]);
@@ -198,7 +196,6 @@ namespace Lowy.UIFramework
             PrefabUtility.SaveAsPrefabAsset(g,
                 $"Assets/{content.prefab_res_path}/{content.content_type}/{name}.prefab");
             DestroyImmediate(g);
-            EditorUtility.ClearProgressBar();
         }
 
         [UnityEditor.Callbacks.DidReloadScripts]
