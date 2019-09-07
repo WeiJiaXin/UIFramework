@@ -1,0 +1,15 @@
+{
+    "name": "UIFramework",
+    "references": [
+        "GUID:3e3db19c8aeb044f7a2447d87a3cacd4"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

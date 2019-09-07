@@ -1,0 +1,12 @@
+{
+    "name": "com.lowy.uiframework",
+    "displayName": "UIFramework",
+    "version": "1.0.1",
+    "unity": "2018.3",
+    "description": "Lowy的UI框架",
+    "keywords": ["uiframework", "uif"],
+    "category": "Controllers",
+    "dependencies": {
+        "com.lowy.binder": "https://github.com/WeiJiaXin/Lowy.Bind.git#1.0.2"
+    }
+}

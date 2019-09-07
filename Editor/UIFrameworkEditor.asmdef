@@ -1,0 +1,15 @@
+{
+    "name": "UIFrameworkEditor",
+    "references": [
+        "GUID:2174dcd23e5854023abaf6f0824e2d1b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
