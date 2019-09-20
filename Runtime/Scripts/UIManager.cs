@@ -118,7 +118,7 @@ namespace Lowy.UIFramework
                 return null;
             var obj = Resources.Load<GameObject>(content.ViewResPath);
             //TODO 解除绑定
-//            Binder.GetBind(obj.GetComponent<UIView>().GetType()).UnBind();
+            Binder.GetBind(obj.GetComponent<UIView>().GetType()).UnBind();
             var res = Object.Instantiate(obj, _UIRoot).GetComponent<UIView>();
             res.name = content.UIViewName();
             res.Canvas.worldCamera = GetUICamera();
@@ -275,8 +275,8 @@ namespace Lowy.UIFramework
                 }
             }
 
-            view.Disable(_stack[_stack.Count - 1]);
-            PopStack(_stack[_stack.Count - 1]);
+            view.Disable(content);
+            PopStack(content);
             return;
         }
 
