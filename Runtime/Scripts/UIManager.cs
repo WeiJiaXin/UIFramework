@@ -148,7 +148,7 @@ namespace Lowy.UIFramework
         {
             //如果有覆盖层则剔除这个层
             if (content.Priority == UIContentType.OverView.ValueToInt()&&
-                (GetUICamera().cullingMask |= GetOutUILayer())==GetUICamera().cullingMask)
+                (GetUICamera().cullingMask | GetOutUILayer())==GetUICamera().cullingMask)
                 GetUICamera().cullingMask ^= GetOutUILayer();
             if (_stack.Count <= 0)
             {
@@ -178,7 +178,7 @@ namespace Lowy.UIFramework
             if (content.Priority == UIContentType.OverView.ValueToInt())
             {
                 if (_stack.Find(c => c.Priority == UIContentType.OverView.ValueToInt()) == null&&
-                    (GetUICamera().cullingMask |= GetOutUILayer())==GetUICamera().cullingMask)
+                    (GetUICamera().cullingMask | GetOutUILayer())!=GetUICamera().cullingMask)
                     GetUICamera().cullingMask ^= GetOutUILayer();
             }
         }
@@ -337,7 +337,7 @@ namespace Lowy.UIFramework
         {
             var camera = new GameObject("UICamera", typeof(Camera)).GetComponent<Camera>();
             camera.clearFlags = CameraClearFlags.Depth;
-            camera.cullingMask = GetUILayer();
+            camera.cullingMask = GetUILayer() + GetOutUILayer();
             camera.orthographic = true;
             camera.orthographicSize = 5;
             camera.depth = 1;
