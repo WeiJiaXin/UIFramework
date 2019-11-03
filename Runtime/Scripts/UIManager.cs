@@ -32,7 +32,9 @@ namespace Lowy.UIFramework
             get
             {
                 if (_config == null)
-                    _config = Resources.Load<UIFrameworkConfig>("UIFramework/Config");
+                    _config = Resources.Load<UIFrameworkConfig>("UIFrameworkConfig");
+                if (_config == null)
+                    Debug.LogError("请创建UIFrameworkConfig到Resources根目录!");
                 return _config;
             }
         }

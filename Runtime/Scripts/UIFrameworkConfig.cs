@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//[CreateAssetMenu]
+[CreateAssetMenu(fileName = "UIFrameworkConfig",menuName = "Lowy/UIFrameworkConfig")]
 [Serializable]
 public class UIFrameworkConfig : ScriptableObject
 {

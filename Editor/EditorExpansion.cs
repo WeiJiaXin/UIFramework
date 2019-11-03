@@ -11,10 +11,8 @@ namespace Lowy.UIFramework
 {
     public class WindowContent
     {
-        public static string[] UIView_base_Names = new[] {"UIView", "AnimUIView"};
         public string cs_name = "NewUIView";
         public UIContentType content_type = UIContentType.UIView;
-        public int uiView_base = 0;
         public Vector2 screenSize = new Vector2(1080, 1920);
         public string cs_path = "Scripts/View";
         public string prefab_res_path = "Resources/View";
@@ -64,8 +62,6 @@ namespace Lowy.UIFramework
 
             _content.cs_name = EditorGUILayout.TextField("CS name", _content.cs_name).Trim();
             _content.content_type = (UIContentType) EditorGUILayout.EnumPopup("Content Type", _content.content_type);
-            _content.uiView_base =
-                EditorGUILayout.Popup("UIView Base Class", _content.uiView_base, WindowContent.UIView_base_Names);
             _content.screenSize = EditorGUILayout.Vector2Field("Screen Size：", _content.screenSize);
             GUILayout.Space(20);
             EditorGUILayout.BeginHorizontal();
@@ -144,14 +140,16 @@ namespace Lowy.UIFramework
 
         private WindowContent GetContent()
         {
-            if (PlayerPrefs.HasKey("UI_FRAMEWORK_WINDOW_CONTENT_KEY"))
-                return JsonUtility.FromJson<WindowContent>(PlayerPrefs.GetString("UI_FRAMEWORK_WINDOW_CONTENT_KEY"));
+            string fileName = Application.dataPath + "/../" + "UIFrameworkConfig.txt";
+            if(File.Exists(fileName))
+                return JsonUtility.FromJson<WindowContent>(File.ReadAllText(fileName));
             return new WindowContent();
         }
 
         private void SaveContent(WindowContent content)
         {
-            PlayerPrefs.SetString("UI_FRAMEWORK_WINDOW_CONTENT_KEY", JsonUtility.ToJson(content));
+            string fileName = Application.dataPath + "/../" + "UIFrameworkConfig.txt";
+            File.WriteAllText(fileName, JsonUtility.ToJson(content));
         }
 
         private void CreateMonoUIView(WindowContent content)
@@ -164,7 +162,7 @@ namespace Lowy.UIFramework
             string text = Resources.Load<TextAsset>("UIFramework/UIView.cs").text;
             text = text.Replace("$FILE_NAME$", content.cs_name);
             text = text.Replace("$CONTENT_TYPE$", content.content_type.ToString());
-            text = text.Replace("$UI_VIEW$", WindowContent.UIView_base_Names[content.uiView_base]);
+            text = text.Replace("$UI_VIEW$", "UIView");
             //
             if (text == oldText)
             {
