@@ -342,7 +342,7 @@ namespace Lowy.UIFramework
             camera.cullingMask = GetUILayer() + GetOutUILayer();
             camera.orthographic = true;
             camera.orthographicSize = 5;
-            camera.depth = 1;
+            camera.depth = 2;
             //
             var particleCamera = new GameObject("ParticleCamera",typeof(Camera)).GetComponent<Camera>();
             particleCamera.clearFlags = CameraClearFlags.Depth;
